@@ -26,7 +26,7 @@ When using `checkout` mode, the plugin should be specified on each build step (e
 
 ```yml
 plugins: &plugins
-  seek-oss/github-merged-pr#v0.0.6:
+  stellargraph/github-merged-pr#v0.0.6:
     mode: checkout
 
 steps:
@@ -43,6 +43,23 @@ steps:
       <<: *plugins
 ```
 
+An example of how to use it with the docker plugin
+
+```yml
+steps:
+  - label: "test"
+    command: ".buildkite/script.sh"
+    plugins:
+      <<: *plugins
+      docker#v1.3.0:
+        image: "stellargraph/image"
+        environment:
+          - BUILDKITE_BRANCH=${BUILDKITE_BRANCH?}
+          - BUILDKITE_PULL_REQUEST=${BUILDKITE_PULL_REQUEST?}
+    agents:
+    - "aws:instance-type=t2.medium"
+```
+
 ## Trigger Mode
 In `trigger` mode the plugin should only be specified on one step, to prevent triggering multiple builds.
 
@@ -52,7 +69,7 @@ steps:
     commands:
       - make something
     plugins:
-      seek-oss/github-merged-pr#v0.0.6:
+      stellargraph/github-merged-pr#v0.0.6:
         mode: trigger
 
   - label: 'Make something else'
