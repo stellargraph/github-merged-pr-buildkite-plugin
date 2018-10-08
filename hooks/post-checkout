@@ -34,7 +34,14 @@ merge() {
   export GIT_COMMITTER_EMAIL="foo@bar"
   export GIT_AUTHOR_NAME="github-merged-pr-buildkite-plugin"
   export GIT_COMMITTER_NAME="github-merged-pr-buildkite-plugin"
-  git merge "${BUILDKITE_COMMIT}"
+  if ! git merge "${BUILDKITE_COMMIT}"; then
+      # if the merge failed (due to conflicts), this script should
+      # still succeed, and testing should still continue (on the
+      # original code): it's useful to know whether that code compiles
+      # in isolation, and there will still be another set of testing
+      # done on the real merge, once the conflicts are resolved.
+      git merge --abort
+  fi
 }
 
 force_merge="${GITHUB_MERGED_PR_FORCE_BRANCH:-}"
