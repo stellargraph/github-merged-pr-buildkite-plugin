@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -veuo pipefail
 
 trigger() {
   local pr="$1"
@@ -41,6 +41,7 @@ merge() {
       # in isolation, and there will still be another set of testing
       # done on the real merge, once the conflicts are resolved.
       git merge --abort
+      git checkout "${BUILDKITE_COMMIT}"
   fi
 }
 
