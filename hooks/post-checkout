@@ -30,19 +30,23 @@ merge() {
   git fetch -v origin "${target_branch}"
   git checkout FETCH_HEAD
   # env vars to ensure merge is non-interactive
-  export GIT_MERGE_AUTOEDIT="no"
-  export GIT_COMMITTER_EMAIL="foo@bar"
   export GIT_AUTHOR_NAME="github-merged-pr-buildkite-plugin"
+  export GIT_COMMITTER_EMAIL="github-merged-pr-buildkite-plugin@stellargraph"
   export GIT_COMMITTER_NAME="github-merged-pr-buildkite-plugin"
+  export GIT_MERGE_AUTOEDIT="no"
   if ! git merge "${BUILDKITE_COMMIT}"; then
-      # if the merge failed (due to conflicts), this script should
-      # still succeed, and testing should still continue (on the
-      # original code): it's useful to know whether that code compiles
-      # in isolation, and there will still be another set of testing
-      # done on the real merge, once the conflicts are resolved.
-      git merge --abort
-      git checkout "${BUILDKITE_COMMIT}"
+    # if the merge failed (due to conflicts), this script should
+    # still succeed, and testing should still continue (on the
+    # original code): it's useful to know whether that code compiles
+    # in isolation, and there will still be another set of testing
+    # done on the real merge, once the conflicts are resolved.
+    git merge --abort
+    git checkout "${BUILDKITE_COMMIT}"
   fi
+  unset GIT_AUTHOR_NAME
+  unset GIT_COMMITTER_EMAIL
+  unset GIT_COMMITTER_NAME
+  unset GIT_MERGE_AUTOEDIT
 }
 
 force_merge="${GITHUB_MERGED_PR_FORCE_BRANCH:-}"
