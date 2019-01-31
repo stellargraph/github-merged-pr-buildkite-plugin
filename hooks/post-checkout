@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# buildkite treats lines starting with +++ (or ---) specially, and the
+# tracing here can result in that, so let's switch to * to avoid that
+export PS4=$(echo "$PS4" | sed 's/+/*/g')
 set -xeuo pipefail
 
 trigger() {
